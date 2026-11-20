@@ -9,5 +9,4 @@ htmlcov/
 work/
 outputs/
 data/*.csv
-kubeflow/btc_kfp_pipeline.yaml
 
