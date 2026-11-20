@@ -10,7 +10,7 @@ services:
       MODEL_STAGE: production
       RELOAD_TOKEN: ${RELOAD_TOKEN:-local-development-token}
     volumes:
-      - model_data:/app/models
+      - ./models:/app/models
     restart: unless-stopped
 
   postgres:
@@ -28,7 +28,10 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   airflow-init:
-    image: apache/airflow:2.10.4-python3.11
+    build:
+      context: .
+      dockerfile: airflow/Dockerfile
+    image: btc-airflow:local
     depends_on:
       postgres:
         condition: service_healthy
@@ -38,33 +41,51 @@ services:
       AIRFLOW__CORE__LOAD_EXAMPLES: "false"
       AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "false"
       PYTHONPATH: /opt/airflow/project
-    command: db migrate
+    user: "${AIRFLOW_UID:-50000}:0"
+    command:
+      - bash
+      - -c
+      - >-
+        airflow db migrate && (
+        airflow users create
+        --username admin
+        --password admin
+        --firstname Assignment
+        --lastname Student
+        --role Admin
+        --email admin@example.com || true)
     volumes: &airflow-volumes
       - ./dags:/opt/airflow/dags
       - .:/opt/airflow/project
-      - model_data:/opt/airflow/project/models
 
   airflow-webserver:
-    image: apache/airflow:2.10.4-python3.11
+    build:
+      context: .
+      dockerfile: airflow/Dockerfile
+    image: btc-airflow:local
     depends_on:
       airflow-init:
         condition: service_completed_successfully
     environment: *airflow-env
+    user: "${AIRFLOW_UID:-50000}:0"
     command: webserver
     ports:
       - "8080:8080"
     volumes: *airflow-volumes
 
   airflow-scheduler:
-    image: apache/airflow:2.10.4-python3.11
+    build:
+      context: .
+      dockerfile: airflow/Dockerfile
+    image: btc-airflow:local
     depends_on:
       airflow-init:
         condition: service_completed_successfully
     environment: *airflow-env
+    user: "${AIRFLOW_UID:-50000}:0"
     command: scheduler
     volumes: *airflow-volumes
 
 volumes:
-  model_data:
   postgres_data:
 

@@ -9,4 +9,5 @@ htmlcov/
 work/
 outputs/
 data/*.csv
+data/processed/*.csv
 
