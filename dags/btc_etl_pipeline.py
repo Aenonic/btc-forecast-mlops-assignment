@@ -49,7 +49,9 @@ def btc_pipeline():
     def validate(metrics_and_metadata: dict) -> dict:
         metrics = metrics_and_metadata["metrics"]
         if metrics["mape_percent"] > 30:
-            raise ValueError(f"MAPE {metrics['mape_percent']} exceeds the 30% registration threshold")
+            raise ValueError(
+                f"MAPE {metrics['mape_percent']} exceeds the 30% registration threshold"
+            )
         return metrics
 
     @task

@@ -10,7 +10,9 @@ import pandas as pd
 import requests
 
 
-def fetch_btc_data(output_path: str | Path = "data/raw/btc_usd.csv", period: str = "5y") -> Path:
+def fetch_btc_data(
+    output_path: str | Path = "data/raw/btc_usd.csv", period: str = "5y"
+) -> Path:
     output = Path(output_path)
     output.parent.mkdir(parents=True, exist_ok=True)
     # Binance's public endpoint requires no API key and provides daily OHLCV candles.
@@ -26,7 +28,10 @@ def fetch_btc_data(output_path: str | Path = "data/raw/btc_usd.csv", period: str
     candles = response.json()
     frame = pd.DataFrame(
         {
-            "date": [datetime.fromtimestamp(row[0] / 1000, timezone.utc).date() for row in candles],
+            "date": [
+                datetime.fromtimestamp(row[0] / 1000, timezone.utc).date()
+                for row in candles
+            ],
             "open": [float(row[1]) for row in candles],
             "high": [float(row[2]) for row in candles],
             "low": [float(row[3]) for row in candles],

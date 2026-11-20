@@ -46,8 +46,12 @@ class ModelService:
 
     def predict(self, days: int, history: list[float] | None = None) -> dict:
         if self.model is None:
-            raise RuntimeError("model is not available; run the training pipeline first")
-        values = list(history if history is not None else self.metadata.get("recent_close", []))
+            raise RuntimeError(
+                "model is not available; run the training pipeline first"
+            )
+        values = list(
+            history if history is not None else self.metadata.get("recent_close", [])
+        )
         if len(values) < self.lags:
             raise RuntimeError("model artifact does not contain enough recent history")
 

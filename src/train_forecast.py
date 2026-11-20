@@ -16,11 +16,15 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error
 from src.features import add_technical_features, lag_matrix
 
 
-def _recursive_forecast(model: Ridge, history: list[float], days: int, lags: int) -> np.ndarray:
+def _recursive_forecast(
+    model: Ridge, history: list[float], days: int, lags: int
+) -> np.ndarray:
     result = []
     values = list(history)
     for _ in range(days):
-        prediction = max(0.01, float(model.predict(np.asarray(values[-lags:]).reshape(1, -1))[0]))
+        prediction = max(
+            0.01, float(model.predict(np.asarray(values[-lags:]).reshape(1, -1))[0])
+        )
         values.append(prediction)
         result.append(prediction)
     return np.asarray(result)
@@ -71,8 +75,12 @@ def train_model(
     output = Path(output_dir)
     output.mkdir(parents=True, exist_ok=True)
     joblib.dump(model, output / "btc_forecast.joblib")
-    (output / "metrics.json").write_text(json.dumps(metrics, indent=2), encoding="utf-8")
-    (output / "metadata.json").write_text(json.dumps(metadata, indent=2), encoding="utf-8")
+    (output / "metrics.json").write_text(
+        json.dumps(metrics, indent=2), encoding="utf-8"
+    )
+    (output / "metadata.json").write_text(
+        json.dumps(metadata, indent=2), encoding="utf-8"
+    )
     return {"metrics": metrics, "metadata": metadata}
 
 

@@ -51,15 +51,25 @@ def create_app(test_config: dict | None = None) -> Flask:
             return jsonify(error="forecast_days must be an integer"), 400
         if not 1 <= days <= app.config["MAX_FORECAST_DAYS"]:
             return (
-                jsonify(error=f"forecast_days must be between 1 and {app.config['MAX_FORECAST_DAYS']}"),
+                jsonify(
+                    error=f"forecast_days must be between 1 and {app.config['MAX_FORECAST_DAYS']}"
+                ),
                 400,
             )
 
         history = payload.get("history")
         if history is not None:
             if not isinstance(history, list) or len(history) < service.lags:
-                return jsonify(error=f"history must contain at least {service.lags} prices"), 400
-            if any(isinstance(v, bool) or not isinstance(v, (int, float)) or v <= 0 for v in history):
+                return (
+                    jsonify(
+                        error=f"history must contain at least {service.lags} prices"
+                    ),
+                    400,
+                )
+            if any(
+                isinstance(v, bool) or not isinstance(v, (int, float)) or v <= 0
+                for v in history
+            ):
                 return jsonify(error="history values must be positive numbers"), 400
 
         try:
