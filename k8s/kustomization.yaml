@@ -1,0 +1,8 @@
+resources:
+  - configmap-secret.yaml
+  - pvc.yaml
+  - deployment.yaml
+  - service.yaml
+  - hpa.yaml
+  - ingress.yaml
+

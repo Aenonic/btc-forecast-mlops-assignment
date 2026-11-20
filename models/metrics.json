@@ -1,0 +1,7 @@
+{
+  "mae": 4815.4764,
+  "rmse": 5036.0569,
+  "mape_percent": 7.6163,
+  "validation_days": 7,
+  "evaluated_at": "2026-11-20T14:50:48.389076+00:00"
+}
